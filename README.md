@@ -1,8 +1,15 @@
 # WebVenerdi
 
-## PAra ejecutar el proyecto
+## Instalación de las dependencias
 
 ```bash
-npm install
-npm run dev
+cd cliente
+pnpm install
+```
+
+## Correr el servicio del Front
+
+```bash
+cd cliente
+pnpm run dev
 ```
