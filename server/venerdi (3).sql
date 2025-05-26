@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 24-05-2025 a las 03:07:59
+-- Tiempo de generación: 26-05-2025 a las 03:51:57
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -38,7 +38,24 @@ CREATE TABLE `category` (
 --
 
 INSERT INTO `category` (`CategoryID`, `Name`, `Description`) VALUES
-(1, 'Pizzas', 'Toda una increíble variedad de pizzas.');
+(1, 'Clásicas', 'Toda una increíble variedad de pizzas clásicas.'),
+(2, 'Especialidades', 'Pizzas de la mas alta especialidad'),
+(4, 'Entradas', 'Gran variedad de entradas para que disfrutes.'),
+(5, 'Ensaladas', 'Gran variedad de ensaladas para que disfrutes.'),
+(6, 'Pastas', 'Gran variedad de pastas para que disfrutes.'),
+(7, 'Calzones', 'Gran variedad de calzones para que disfrutes.'),
+(8, 'Hamburguesas', 'Gran variedad de hamburguesas para que disfrutes.'),
+(9, 'Rollos Italianos', 'Gran variedad de rollos italianos para que disfrutes.'),
+(10, 'Strombolis', 'Gran variedad de strombolis para que disfrutes.'),
+(11, 'Aderezos Extras', 'Gran variedad de aderezos extras para que disfrutes.'),
+(12, 'Bebidas', 'Gran variedad de bebidas para que disfrutes.'),
+(13, 'Refrescos', 'Gran variedad de refrescos para que disfrutes.'),
+(14, 'Cerveza', 'Gran variedad de cervezas para que disfrutes.'),
+(15, 'Caffe', 'Gran variedad de cafes para que disfrutes.'),
+(16, 'Soda Italiana', 'Gran variedad de soda italiana para que disfrutes.'),
+(17, 'Malteadas', 'Gran variedad de malteadas para que disfrutes.'),
+(18, 'Té', 'Gran variedad de té para que disfrutes.'),
+(19, 'Postres', 'Gran variedad de postres para que disfrutes.');
 
 -- --------------------------------------------------------
 
@@ -65,6 +82,37 @@ CREATE TABLE `guestordercontact` (
   `Phone` varchar(20) DEFAULT NULL,
   `Address` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ingredient`
+--
+
+CREATE TABLE `ingredient` (
+  `IngredientID` int(11) NOT NULL,
+  `Name` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `ingredient`
+--
+
+INSERT INTO `ingredient` (`IngredientID`, `Name`) VALUES
+(1, 'Queso Mozzarella'),
+(2, 'Durazno'),
+(3, 'Jamón'),
+(4, 'Salsa de tomate'),
+(5, 'Queso Parmesano'),
+(6, 'Queso Ricotta'),
+(7, 'Queso Gouda'),
+(8, 'Orégano'),
+(9, 'Jamón Serrano'),
+(10, 'Alcachofas'),
+(11, 'Aceitunas Negras'),
+(12, 'Portobello'),
+(13, 'Albahaca'),
+(14, 'Salsa Marinara');
 
 -- --------------------------------------------------------
 
@@ -131,7 +179,78 @@ CREATE TABLE `product` (
 --
 
 INSERT INTO `product` (`ProductID`, `Name`, `Description`, `BasePrice`, `Available`, `CategoryID`, `ImageURL`) VALUES
-(1, 'Pizza de Durazno', 'Una increíble y deliciosa pizza sabor durazno.', 200.00, 10, 1, 'products/pizza_durazno.jpg');
+(1, 'Pizza de Durazno', 'Una increíble y deliciosa pizza sabor durazno.', 200.00, 10, 1, 'products/pizza_durazno.jpg'),
+(2, '4 Quesos', 'Una impresionante pizza con una variedad explosiva de quesos.', 200.00, 10, 1, 'products/pizza_default.jpg'),
+(3, 'Naranjada', 'Una refrescante bebida.', 40.00, 10, 12, 'products/pizza_default.jpg'),
+(4, 'Café Americano', 'Un delicioso Café.', 35.00, 10, 15, 'products/pizza_default.jpg'),
+(5, 'Capricciosa', 'Deliciosa pizza.', 250.00, 10, 2, 'products/pizza_default.jpg'),
+(6, 'Pan de ajo(4 pzs)', 'Crujiente pan al horno.', 45.00, 10, 4, 'products/pizza_default.jpg');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `productsize`
+--
+
+CREATE TABLE `productsize` (
+  `ProductSizeID` int(11) NOT NULL,
+  `ProductID` int(11) NOT NULL,
+  `Size` varchar(50) NOT NULL,
+  `Price` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `productsize`
+--
+
+INSERT INTO `productsize` (`ProductSizeID`, `ProductID`, `Size`, `Price`) VALUES
+(1, 1, 'Chica', 120.00),
+(2, 1, 'Mediana', 160.00),
+(3, 1, 'Grande', 200.00),
+(4, 2, 'Mediana', 170.00),
+(5, 2, 'Grande', 205.00),
+(6, 2, 'Familiar', 255.00),
+(7, 3, 'Vazo', 40.00),
+(8, 3, 'Jarra', 120.00),
+(9, 5, 'Mediana', 250.00),
+(10, 5, 'Grande', 280.00),
+(11, 5, 'Familiar', 310.00);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `product_ingredient`
+--
+
+CREATE TABLE `product_ingredient` (
+  `ProductID` int(11) NOT NULL,
+  `IngredientID` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `product_ingredient`
+--
+
+INSERT INTO `product_ingredient` (`ProductID`, `IngredientID`) VALUES
+(1, 1),
+(1, 2),
+(1, 3),
+(1, 4),
+(2, 1),
+(2, 4),
+(2, 5),
+(2, 6),
+(2, 7),
+(2, 8),
+(5, 1),
+(5, 4),
+(5, 8),
+(5, 9),
+(5, 10),
+(5, 11),
+(5, 12),
+(5, 13),
+(6, 14);
 
 -- --------------------------------------------------------
 
@@ -173,6 +292,12 @@ ALTER TABLE `guestordercontact`
   ADD PRIMARY KEY (`GuestContactID`);
 
 --
+-- Indices de la tabla `ingredient`
+--
+ALTER TABLE `ingredient`
+  ADD PRIMARY KEY (`IngredientID`);
+
+--
 -- Indices de la tabla `order`
 --
 ALTER TABLE `order`
@@ -204,6 +329,20 @@ ALTER TABLE `product`
   ADD KEY `CategoryID` (`CategoryID`);
 
 --
+-- Indices de la tabla `productsize`
+--
+ALTER TABLE `productsize`
+  ADD PRIMARY KEY (`ProductSizeID`),
+  ADD KEY `ProductID` (`ProductID`);
+
+--
+-- Indices de la tabla `product_ingredient`
+--
+ALTER TABLE `product_ingredient`
+  ADD PRIMARY KEY (`ProductID`,`IngredientID`),
+  ADD KEY `IngredientID` (`IngredientID`);
+
+--
 -- Indices de la tabla `user`
 --
 ALTER TABLE `user`
@@ -218,7 +357,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT de la tabla `category`
 --
 ALTER TABLE `category`
-  MODIFY `CategoryID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `CategoryID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT de la tabla `customizationoption`
@@ -231,6 +370,12 @@ ALTER TABLE `customizationoption`
 --
 ALTER TABLE `guestordercontact`
   MODIFY `GuestContactID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `ingredient`
+--
+ALTER TABLE `ingredient`
+  MODIFY `IngredientID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `order`
@@ -254,7 +399,13 @@ ALTER TABLE `orderitemcustomization`
 -- AUTO_INCREMENT de la tabla `product`
 --
 ALTER TABLE `product`
-  MODIFY `ProductID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ProductID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT de la tabla `productsize`
+--
+ALTER TABLE `productsize`
+  MODIFY `ProductSizeID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de la tabla `user`
@@ -292,6 +443,19 @@ ALTER TABLE `orderitemcustomization`
 --
 ALTER TABLE `product`
   ADD CONSTRAINT `product_ibfk_1` FOREIGN KEY (`CategoryID`) REFERENCES `category` (`CategoryID`);
+
+--
+-- Filtros para la tabla `productsize`
+--
+ALTER TABLE `productsize`
+  ADD CONSTRAINT `productsize_ibfk_1` FOREIGN KEY (`ProductID`) REFERENCES `product` (`ProductID`);
+
+--
+-- Filtros para la tabla `product_ingredient`
+--
+ALTER TABLE `product_ingredient`
+  ADD CONSTRAINT `product_ingredient_ibfk_1` FOREIGN KEY (`ProductID`) REFERENCES `product` (`ProductID`),
+  ADD CONSTRAINT `product_ingredient_ibfk_2` FOREIGN KEY (`IngredientID`) REFERENCES `ingredient` (`IngredientID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
