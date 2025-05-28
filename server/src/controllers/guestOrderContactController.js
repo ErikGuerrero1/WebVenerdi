@@ -15,7 +15,7 @@ const getAllGuestOrderContacts = async (req, res) => {
         console.error('Error getting all guestOrderContacts:', error);
         return res.status(500).json({
             success: false,
-            message: 'Error al obtener los datos de invitados'
+            message: 'Error al obtener datos de invitados'
         });
     }
 }
@@ -77,8 +77,54 @@ const createGuestOrderContact = async (req, res) => {
     }
 }
 
+// Params: guestContactId
+// Body: Name, Email, Phone, Address
+const updateGuestOrderContact = async (req, res) => {
+    try {
+        const { guestContactId } = req.params;
+
+        const query = `UPDATE guestordercontact SET ? WHERE GuestContactID = ?`;
+        const resp = await pool.query(query, [req.body, guestContactId]);
+
+        return res.status(200).json({
+            success: true,
+            data: resp
+        });
+    } catch (error) {
+        console.error('Error updating guestOrderContact:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error al actualizar datos de invitado'
+        });
+    }
+}
+
+// Params: guestContactId
+// Body: None
+const deleteGuestOrderContact = async (req, res) => {
+    try {
+        const { guestContactId } = req.params;
+
+        const query = `DELETE FROM guestordercontact WHERE GuestContactID = ?`;
+        const resp = await pool.query(query, [guestContactId]);
+
+        return res.status(200).json({
+            success: true,
+            data: resp
+        });
+    } catch (error) {
+        console.error('Error deleting guestOrderContact:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error al eliminar datos de invitado'
+        });
+    }
+}
+
 module.exports = {
     getAllGuestOrderContacts,
     getGuestOrderContactById,
     createGuestOrderContact,
+    updateGuestOrderContact,
+    deleteGuestOrderContact,
 };
