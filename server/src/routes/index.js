@@ -5,6 +5,7 @@ const categoryRoutes = require('./categoryRoutes.js');
 const ingredientRoutes = require('./ingredientRoutes.js');
 const productsizeRoutes = require('./productsizeRoutes.js');
 const productIngredientRoutes = require('./productIngredientRoutes.js');
+const orderRoutes = require('./orderRoutes.js');
 const userRoutes = require('./userRoutes.js');
 
 const router = express.Router();
@@ -16,5 +17,6 @@ router.use('/ingredients', ingredientRoutes);
 router.use('/productsizes', productsizeRoutes);
 router.use('/product-ingredients', productIngredientRoutes);
 router.use('/users', userRoutes);   // Nueva ruta para usuarios
+router.use('/orders', orderRoutes);  // Nueva ruta para órdenes
 
 module.exports = router;
