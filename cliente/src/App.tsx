@@ -4,6 +4,7 @@ import HomePage from './components/Home';
 import MenuPage from './components/menu';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import PersonalizaPage from './components/Personaliza';
 
 interface Product {
   id: number;
@@ -50,7 +51,12 @@ const AppContent = () => {
         onCartClick={handleCartClick}
       />
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route 
+          path="/"
+          element={
+            <HomePage />
+          } 
+        />
         <Route 
           path="/menu" 
           element={
@@ -58,6 +64,12 @@ const AppContent = () => {
               onAddToCart={handleAddToCart}
               addingToCart={addingToCart}
             />
+          } 
+        />
+        <Route 
+          path="/personaliza"
+          element={
+            <PersonalizaPage />
           } 
         />
       </Routes>
