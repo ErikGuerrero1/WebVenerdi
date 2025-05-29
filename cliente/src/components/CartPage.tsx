@@ -100,7 +100,7 @@ const CartPage = ({
                     <div className="flex items-center gap-2 sm:gap-4">
                         <Button
                             onClick={onGoBack}
-                            className="bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full p-2 flex-shrink-0"
+                            className="bg-gray-600 hover:bg-gray-200 text-gray-700 rounded-full p-2 flex-shrink-0"
                         >
                             <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
                         </Button>
@@ -113,7 +113,7 @@ const CartPage = ({
                     {cartItems.length > 0 && (
                         <Button
                             onClick={onClearCart}
-                            className="bg-red-100 hover:bg-red-200 text-red-700 rounded-lg px-3 sm:px-4 py-2 text-xs sm:text-sm w-full sm:w-auto"
+                            className="bg-red-500 hover:bg-red-200 text-red-700 rounded-lg px-3 sm:px-4 py-2 text-xs sm:text-sm w-full sm:w-auto"
                         >
                             Vaciar Carrito
                         </Button>
@@ -150,7 +150,7 @@ const CartPage = ({
                                                 <Button
                                                     onClick={() => handleRemoveItem(item.id)}
                                                     disabled={updatingItem === item.id}
-                                                    className="bg-red-100 hover:bg-red-200 text-red-600 p-1.5 sm:p-2 rounded-lg flex-shrink-0"
+                                                    className="bg-red-500 hover:bg-red-200 text-red-600 p-1.5 sm:p-2 rounded-lg flex-shrink-0"
                                                 >
                                                     <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                                                 </Button>
@@ -162,12 +162,12 @@ const CartPage = ({
                                                     <Button
                                                         onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
                                                         disabled={item.quantity <= 1 || updatingItem === item.id}
-                                                        className="bg-white hover:bg-gray-50 text-gray-950 w-6 h-6 sm:w-8 sm:h-8 rounded-md p-0 flex items-center justify-center font-bold text-lg"
+                                                        className="bg-white hover:bg-gray-50 text-teal-950 w-6 h-6 sm:w-8 sm:h-8 rounded-md p-0 flex items-center justify-center font-bold text-lg"
                                                     >
                                                         -
                                                     </Button>
 
-                                                    <span className="font-semibold text-gray-800 min-w-[1.5rem] sm:min-w-[2rem] text-center text-sm sm:text-base">
+                                                    <span className="font-semibold text-teal-950 min-w-[1.5rem] sm:min-w-[2rem] text-center text-sm sm:text-base">
                                                         {updatingItem === item.id ? (
                                                             <div className="animate-spin rounded-full h-3 w-3 sm:h-4 sm:w-4 border-b-2 border-orange-500 mx-auto"></div>
                                                         ) : (
@@ -178,7 +178,7 @@ const CartPage = ({
                                                     <Button
                                                         onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
                                                         disabled={updatingItem === item.id}
-                                                        className="bg-white hover:bg-gray-50 text-gray-950 w-6 h-6 sm:w-8 sm:h-8 rounded-md p-0 flex items-center justify-center font-bold text-lg"
+                                                        className="bg-white hover:bg-gray-50 text-teal-950 w-6 h-6 sm:w-8 sm:h-8 rounded-md p-0 flex items-center justify-center font-bold text-lg"
                                                     >
                                                         +
                                                     </Button>

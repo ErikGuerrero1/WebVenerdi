@@ -154,7 +154,7 @@ const MenuPage = ({ onAddToCart, addingToCart }: MenuPageProps) => {
                             onClick={() => setSelectedCategory(null)}
                             className={`rounded-full border transition-colors ${selectedCategory === null
                                 ? 'bg-slate-950 hover:bg-slate-950 text-white border-orange-500'
-                                : 'bg-white text-slate-950 hover:bg-neutral-700 hover:text-white '
+                                : 'bg-white text-teal-950 hover:bg-neutral-700 hover:text-white '
                                 }`}
                         >
                             Todos
@@ -164,8 +164,8 @@ const MenuPage = ({ onAddToCart, addingToCart }: MenuPageProps) => {
                                 key={category.CategoryID}
                                 onClick={() => setSelectedCategory(category.CategoryID)}
                                 className={`rounded-full border transition-colors ${selectedCategory === category.CategoryID
-                                    ? 'bg-gray-950 hover:bg-black text-white border-black'
-                                    : 'bg-white text-slate-950 hover:bg-neutral-700 hover:text-white '
+                                    ? 'bg-slate-950 hover:bg-slate-950 text-white border-orange-500'
+                                    : 'bg-white text-teal-950 hover:bg-neutral-700 hover:text-white '
                                     }`}
                             >
                                 {category.Name}
