@@ -1,9 +1,14 @@
-import { useState } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
-import HomePage from './components/Home';
-import MenuPage from './components/menu';
-import Header from './components/Header';
-import Footer from './components/Footer';
+import { useState } from "react";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import HomePage from "./components/Home";
+import MenuPage from "./components/menu";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import Location from "./components/Location";
+import Social from "./components/Social";
+import Contact from "./components/Contact";
+import Login from "./components/Login";
+import Register from "./components/Register";
 
 interface Product {
   id: number;
@@ -24,42 +29,49 @@ const AppContent = () => {
   const handleAddToCart = async (product: Product) => {
     setAddingToCart(product.id);
     // Simular delay de la API
-    await new Promise(resolve => setTimeout(resolve, 500));
-    setCart(prevCart => [...prevCart, product]);
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    setCart((prevCart) => [...prevCart, product]);
     setAddingToCart(null);
   };
 
   const handleCartClick = () => {
     // Aquí puedes implementar la lógica para abrir el carrito
     // Por ejemplo, abrir un modal o navegar a una página del carrito
-    console.log('Carrito clickeado:', cart);
+    console.log("Carrito clickeado:", cart);
     // Ejemplo: podrías mostrar un alert con el contenido del carrito
     if (cart.length === 0) {
-      alert('Tu carrito está vacío');
+      alert("Tu carrito está vacío");
     } else {
-      const cartItems = cart.map(item => `${item.name} - $${item.price}`).join('\n');
+      const cartItems = cart
+        .map((item) => `${item.name} - $${item.price}`)
+        .join("\n");
       alert(`Carrito (${cart.length} items):\n${cartItems}`);
     }
   };
 
   return (
     <>
-      <Header 
+      <Header
         currentPath={location.pathname}
         cart={cart}
         onCartClick={handleCartClick}
       />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route 
-          path="/menu" 
+        <Route
+          path="/menu"
           element={
-            <MenuPage 
+            <MenuPage
               onAddToCart={handleAddToCart}
               addingToCart={addingToCart}
             />
-          } 
+          }
         />
+        <Route path="/ubicacion" element={<Location />} />
+        <Route path="/Redes" element={<Social />} />
+        <Route path="/Contacto" element={<Contact />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/Registro" element={<Register />} />
       </Routes>
       <Footer />
     </>
