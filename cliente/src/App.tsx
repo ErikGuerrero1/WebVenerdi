@@ -10,6 +10,7 @@ import Contact from "./components/Contact";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import CartPage from './components/CartPage';
+import PersonalizaPage from './components/Personaliza';
 
 interface CartItem {
   productId: number;
@@ -124,6 +125,7 @@ const AppContent = () => {
           <Route path="/Contacto" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/Registro" element={<Register />} />
+          <Route path="/personaliza" element={<PersonalizaPage />} />
         </Routes>
 
         <Footer />

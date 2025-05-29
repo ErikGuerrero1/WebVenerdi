@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Card, CardContent } from '../components/ui/card'
 import { Button } from '../components/ui/button'
 import { Plus, Star, Clock, X } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 interface ProductSize {
     ProductSizeID: number
@@ -131,11 +132,20 @@ const MenuPage = ({ onAddToCart, addingToCart }: MenuPageProps) => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 pt-20 md:pt-24">
             <div className="bg-white shadow-lg">
-                <div className="max-w-7xl mx-auto px-4 py-6">
-                    <h1 className="text-3xl font-bold text-gray-800">Nuestro Menú</h1>
-                    <p className="text-gray-600 mt-1">Descubre nuestros platos más deliciosos</p>
+                <div className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-800">Nuestro Menú</h1>
+                        <p className="text-gray-600 mt-1">Descubre nuestros platos más deliciosos</p>
+                    </div>
+                    <Link
+                        to="/personaliza"
+                        className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded inline-block"
+                    >
+                        ¡Crea tu propia pizza!
+                    </Link>
                 </div>
             </div>
+
 
             <div className="max-w-7xl mx-auto px-4 py-8">
                 <div className="mb-8">
