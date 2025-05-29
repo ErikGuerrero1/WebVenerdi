@@ -4,12 +4,12 @@
 
 ```bash
 cd cliente
-npm install
+pnpm install
 ```
 
 ## Correr el servicio del Front
 
 ```bash
 cd cliente
-npm run dev
+pnpm run dev
 ```
