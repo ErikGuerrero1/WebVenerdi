@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import HomePage from "./components/Home";
 import MenuPage from "./components/menu";
 import Header from "./components/Header";
@@ -9,81 +9,134 @@ import Social from "./components/Social";
 import Contact from "./components/Contact";
 import Login from "./components/Login";
 import Register from "./components/Register";
+import CartPage from './components/CartPage';
 
-interface Product {
-  id: number;
+interface CartItem {
+  productId: number;
   name: string;
-  description: string;
   price: number;
+  size?: string;
+  sizeId?: number;
   imageUrl: string;
-  categoryId: number;
-  categoryName: string;
+  quantity: number;
+  id: string;
 }
 
-// Componente interno que tiene acceso a useLocation
 const AppContent = () => {
-  const [cart, setCart] = useState<Product[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
   const [addingToCart, setAddingToCart] = useState<number | null>(null);
   const location = useLocation();
+  const navigate = useNavigate();
 
-  const handleAddToCart = async (product: Product) => {
-    setAddingToCart(product.id);
-    // Simular delay de la API
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    setCart((prevCart) => [...prevCart, product]);
-    setAddingToCart(null);
+  const generateCartItemId = (productId: number, sizeId?: number) => {
+    return `${productId}-${sizeId || 'default'}-${Date.now()}`;
   };
 
-  const handleCartClick = () => {
-    // Aquí puedes implementar la lógica para abrir el carrito
-    // Por ejemplo, abrir un modal o navegar a una página del carrito
-    console.log("Carrito clickeado:", cart);
-    // Ejemplo: podrías mostrar un alert con el contenido del carrito
-    if (cart.length === 0) {
-      alert("Tu carrito está vacío");
-    } else {
-      const cartItems = cart
-        .map((item) => `${item.name} - $${item.price}`)
-        .join("\n");
-      alert(`Carrito (${cart.length} items):\n${cartItems}`);
-    }
+    const handleAddToCart = async (item: CartItem) => {
+      setAddingToCart(item.productId);
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      const newCartItem: CartItem = {
+        ...item,
+        quantity: 1,
+        id: generateCartItemId(item.productId, item.sizeId)
+      };
+
+      setCart(prevCart => [...prevCart, newCartItem]);
+      setAddingToCart(null);
+    };
+
+    const handleUpdateQuantity = async (itemId: string, newQuantity: number) => {
+      await new Promise(resolve => setTimeout(resolve, 200));
+      setCart(prevCart =>
+        prevCart.map(item =>
+          item.id === itemId
+            ? { ...item, quantity: newQuantity }
+            : item
+        )
+      );
+    };
+
+    const handleRemoveItem = async (itemId: string) => {
+      await new Promise(resolve => setTimeout(resolve, 200));
+      setCart(prevCart => prevCart.filter(item => item.id !== itemId));
+    };
+
+    const handleClearCart = () => {
+      setCart([]);
+    };
+
+    const handleProceedToCheckout = () => {
+
+      setCart([]);
+      const phoneNumber = '9531720143';
+      let message = '¡Hola! Quiero hacer una compra. Estos son los productos:\n\n';
+
+      cart.forEach(item => {
+        message += ` ${item.name} (cantidad: ${item.quantity}) - Precio($${item.price}c/u): $${item.price * item.quantity}\n`;
+      });
+
+      const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+      message += `\nTotal: $${total}`;
+
+      const encodedMessage = encodeURIComponent(message);
+      const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+
+      // Redirigir a WhatsApp
+      window.open(whatsappUrl, '_blank');
+      
+    };
+
+
+    const handleCartClick = () => {
+      navigate('/cart'); 
   };
 
-  return (
-    <>
-      <Header
-        currentPath={location.pathname}
-        cart={cart}
-        onCartClick={handleCartClick}
-      />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route
-          path="/menu"
-          element={
-            <MenuPage
-              onAddToCart={handleAddToCart}
-              addingToCart={addingToCart}
-            />
-          }
+    return (
+      <>
+        <Header
+          currentPath={location.pathname}
+          cart={cart}
+          onCartClick={handleCartClick}
         />
-        <Route path="/ubicacion" element={<Location />} />
-        <Route path="/Redes" element={<Social />} />
-        <Route path="/Contacto" element={<Contact />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/Registro" element={<Register />} />
-      </Routes>
-      <Footer />
-    </>
-  );
-};
 
-function App() {
-  return (
-    <BrowserRouter>
-      <AppContent />
-    </BrowserRouter>
-  );
-}
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route
+            path="/menu"
+            element={<MenuPage onAddToCart={handleAddToCart} addingToCart={addingToCart} />}
+          />
+          <Route
+            path="/cart"
+            element={
+              <CartPage
+                cartItems={cart}
+                onUpdateQuantity={handleUpdateQuantity}
+                onRemoveItem={handleRemoveItem}
+                onClearCart={handleClearCart}
+                onGoBack={() => navigate(-1)}
+                onProceedToCheckout={handleProceedToCheckout}
+              />
+            }
+          />
+          <Route path="/ubicacion" element={<Location />} />
+          <Route path="/Redes" element={<Social />} />
+          <Route path="/Contacto" element={<Contact />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/Registro" element={<Register />} />
+        </Routes>
 
-export default App;
+        <Footer />
+      </>
+    );
+  };
+
+  function App() {
+    return (
+      <BrowserRouter>
+        <AppContent />
+      </BrowserRouter>
+    );
+  }
+
+  export default App;
