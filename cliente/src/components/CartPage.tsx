@@ -64,7 +64,7 @@ const CartPage = ({
                     <div className="flex items-center gap-2 sm:gap-4 mb-6 sm:mb-8">
                         <Button
                             onClick={onGoBack}
-                            className="bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full p-2 flex-shrink-0"
+                            className="bg-gray-600 hover:bg-gray-200 text-gray-700 rounded-full p-2 flex-shrink-0"
                         >
                             <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
                         </Button>
