@@ -8,17 +8,22 @@ type Ingredient = {
   src: string
 }
 
-export const IngredientImage = ({ ingredient }: { ingredient: Ingredient }) => {
-  const [image] = useImage(ingredient.src) // ✅ Uso correcto aquí, no dentro de un map
-  if (!image) return null
-
+export const IngredientImage = ({
+  ingredient,
+  onClick,
+}: {
+  ingredient: Ingredient;
+  onClick?: () => void;
+}) => {
   return (
     <KonvaImage
-      image={image}
+      image={useImage(ingredient.src)[0]}
       x={ingredient.x}
       y={ingredient.y}
       width={40}
       height={40}
+      onClick={onClick}
     />
-  )
-}
+  );
+};
+
