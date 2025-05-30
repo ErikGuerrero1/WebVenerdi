@@ -162,7 +162,7 @@ const CartPage = ({
                                                     <Button
                                                         onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
                                                         disabled={item.quantity <= 1 || updatingItem === item.id}
-                                                        className="bg-white hover:bg-gray-50 text-teal-950 w-6 h-6 sm:w-8 sm:h-8 rounded-md p-0 flex items-center justify-center font-bold text-lg"
+                                                        className="bg-white hover:bg-gray-50 text-slate-950 w-6 h-6 sm:w-8 sm:h-8 rounded-md p-0 flex items-center justify-center font-bold text-lg"
                                                     >
                                                         -
                                                     </Button>
@@ -178,7 +178,7 @@ const CartPage = ({
                                                     <Button
                                                         onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
                                                         disabled={updatingItem === item.id}
-                                                        className="bg-white hover:bg-gray-50 text-teal-950 w-6 h-6 sm:w-8 sm:h-8 rounded-md p-0 flex items-center justify-center font-bold text-lg"
+                                                        className="bg-white hover:bg-gray-50 text-slate-950 w-6 h-6 sm:w-8 sm:h-8 rounded-md p-0 flex items-center justify-center font-bold text-lg"
                                                     >
                                                         +
                                                     </Button>
