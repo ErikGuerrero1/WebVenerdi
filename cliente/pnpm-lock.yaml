@@ -41,6 +41,9 @@ importers:
       use-image:
         specifier: ^1.1.4
         version: 1.1.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      vite-project:
+        specifier: 'file:'
+        version: file:(@types/react@19.1.5)(vite@6.3.5(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0))
     devDependencies:
       '@eslint/js':
         specifier: ^9.25.0
@@ -1666,6 +1669,9 @@ packages:
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
+  'vite-project@file:':
+    resolution: {directory: '', type: directory}
+
   vite@6.3.5:
     resolution: {integrity: sha512-cZn6NDFE7wdTpINgs++ZJ4N49W2vRp8LCKrn3Ob1kYNtOo21vfDoaV5GzBfLU4MovSAB8uNRm4jgzVQZ+mBzPQ==}
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
@@ -3221,6 +3227,25 @@ snapshots:
       react-dom: 19.1.0(react@19.1.0)
 
   util-deprecate@1.0.2: {}
+
+  vite-project@file:(@types/react@19.1.5)(vite@6.3.5(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0)):
+    dependencies:
+      '@react-spring/web': 10.0.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@tailwindcss/vite': 4.1.7(vite@6.3.5(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0))
+      konva: 9.3.20
+      lucide-react: 0.511.0(react@19.1.0)
+      react: 19.1.0
+      react-dnd: 16.0.1(@types/react@19.1.5)(react@19.1.0)
+      react-dnd-html5-backend: 16.0.1
+      react-dom: 19.1.0(react@19.1.0)
+      react-konva: 19.0.4(@types/react@19.1.5)(konva@9.3.20)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react-router-dom: 7.6.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      use-image: 1.1.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+    transitivePeerDependencies:
+      - '@types/hoist-non-react-statics'
+      - '@types/node'
+      - '@types/react'
+      - vite
 
   vite@6.3.5(jiti@2.4.2)(lightningcss@1.30.1)(yaml@2.8.0):
     dependencies:
