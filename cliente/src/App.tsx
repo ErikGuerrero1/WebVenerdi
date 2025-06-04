@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import HomePage from "./components/Home";
 import MenuPage from "./components/menu";
 import Header from "./components/Header";
@@ -9,8 +15,10 @@ import Social from "./components/Social";
 import Contact from "./components/Contact";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import CartPage from './components/CartPage';
-import PersonalizaPage from './components/Personaliza';
+import CartPage from "./components/CartPage";
+import PersonalizaPage from "./components/Personaliza";
+
+import { AuthProvider } from "./components/context/AuthContext";
 
 interface CartItem {
   productId: number;
@@ -30,115 +38,123 @@ const AppContent = () => {
   const navigate = useNavigate();
 
   const generateCartItemId = (productId: number, sizeId?: number) => {
-    return `${productId}-${sizeId || 'default'}-${Date.now()}`;
+    return `${productId}-${sizeId || "default"}-${Date.now()}`;
   };
 
-    const handleAddToCart = async (item: CartItem) => {
-      setAddingToCart(item.productId);
-      await new Promise(resolve => setTimeout(resolve, 500));
+  const handleAddToCart = async (item: CartItem) => {
+    setAddingToCart(item.productId);
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
-      const newCartItem: CartItem = {
-        ...item,
-        quantity: 1,
-        id: generateCartItemId(item.productId, item.sizeId)
-      };
-
-      setCart(prevCart => [...prevCart, newCartItem]);
-      setAddingToCart(null);
+    const newCartItem: CartItem = {
+      ...item,
+      quantity: 1,
+      id: generateCartItemId(item.productId, item.sizeId),
     };
 
-    const handleUpdateQuantity = async (itemId: string, newQuantity: number) => {
-      await new Promise(resolve => setTimeout(resolve, 200));
-      setCart(prevCart =>
-        prevCart.map(item =>
-          item.id === itemId
-            ? { ...item, quantity: newQuantity }
-            : item
-        )
-      );
-    };
-
-    const handleRemoveItem = async (itemId: string) => {
-      await new Promise(resolve => setTimeout(resolve, 200));
-      setCart(prevCart => prevCart.filter(item => item.id !== itemId));
-    };
-
-    const handleClearCart = () => {
-      setCart([]);
-    };
-
-    const handleProceedToCheckout = () => {
-
-      setCart([]);
-      const phoneNumber = '9531720143';
-      let message = '¡Hola! Quiero hacer una compra. Estos son los productos:\n\n';
-
-      cart.forEach(item => {
-        message += ` ${item.name} (cantidad: ${item.quantity}) - Precio($${item.price}c/u): $${item.price * item.quantity}\n`;
-      });
-
-      const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-      message += `\nTotal: $${total}`;
-
-      const encodedMessage = encodeURIComponent(message);
-      const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-
-      // Redirigir a WhatsApp
-      window.open(whatsappUrl, '_blank');
-      
-    };
-
-
-    const handleCartClick = () => {
-      navigate('/cart'); 
+    setCart((prevCart) => [...prevCart, newCartItem]);
+    setAddingToCart(null);
   };
 
-    return (
-      <>
-        <Header
-          currentPath={location.pathname}
-          cart={cart}
-          onCartClick={handleCartClick}
-        />
-
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route
-            path="/menu"
-            element={<MenuPage onAddToCart={handleAddToCart} addingToCart={addingToCart} />}
-          />
-          <Route
-            path="/cart"
-            element={
-              <CartPage
-                cartItems={cart}
-                onUpdateQuantity={handleUpdateQuantity}
-                onRemoveItem={handleRemoveItem}
-                onClearCart={handleClearCart}
-                onGoBack={() => navigate(-1)}
-                onProceedToCheckout={handleProceedToCheckout}
-              />
-            }
-          />
-          <Route path="/ubicacion" element={<Location />} />
-          <Route path="/Redes" element={<Social />} />
-          <Route path="/Contacto" element={<Contact />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/Registro" element={<Register />} />
-          <Route path="/personaliza" element={<PersonalizaPage />} />
-        </Routes>
-
-        <Footer />
-      </>
+  const handleUpdateQuantity = async (itemId: string, newQuantity: number) => {
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    setCart((prevCart) =>
+      prevCart.map((item) =>
+        item.id === itemId ? { ...item, quantity: newQuantity } : item
+      )
     );
   };
 
-  function App() {
-    return (
+  const handleRemoveItem = async (itemId: string) => {
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    setCart((prevCart) => prevCart.filter((item) => item.id !== itemId));
+  };
+
+  const handleClearCart = () => {
+    setCart([]);
+  };
+
+  const handleProceedToCheckout = () => {
+    setCart([]);
+    const phoneNumber = "9531720143";
+    let message =
+      "¡Hola! Quiero hacer una compra. Estos son los productos:\n\n";
+
+    cart.forEach((item) => {
+      message += ` ${item.name} (cantidad: ${item.quantity}) - Precio($${
+        item.price
+      }c/u): $${item.price * item.quantity}\n`;
+    });
+
+    const total = cart.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+    message += `\nTotal: $${total}`;
+
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+
+    // Redirigir a WhatsApp
+    window.open(whatsappUrl, "_blank");
+  };
+
+  const handleCartClick = () => {
+    navigate("/cart");
+  };
+
+  return (
+    <>
+      <Header
+        currentPath={location.pathname}
+        cart={cart}
+        onCartClick={handleCartClick}
+      />
+
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route
+          path="/menu"
+          element={
+            <MenuPage
+              onAddToCart={handleAddToCart}
+              addingToCart={addingToCart}
+            />
+          }
+        />
+        <Route
+          path="/cart"
+          element={
+            <CartPage
+              cartItems={cart}
+              onUpdateQuantity={handleUpdateQuantity}
+              onRemoveItem={handleRemoveItem}
+              onClearCart={handleClearCart}
+              onGoBack={() => navigate(-1)}
+              onProceedToCheckout={handleProceedToCheckout}
+            />
+          }
+        />
+        <Route path="/ubicacion" element={<Location />} />
+        <Route path="/Redes" element={<Social />} />
+        <Route path="/Contacto" element={<Contact />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/Registro" element={<Register />} />
+        <Route path="/personaliza" element={<PersonalizaPage />} />
+      </Routes>
+
+      <Footer />
+    </>
+  );
+};
+
+function App() {
+  return (
+    <AuthProvider>
       <BrowserRouter>
         <AppContent />
       </BrowserRouter>
-    );
-  }
+    </AuthProvider>
+  );
+}
 
-  export default App;
+export default App;
