@@ -23,6 +23,13 @@ interface AuthState {
   loginWithEmailPassword: (email: string, password: string) => Promise<void>;
   logout: () => void;
   //Aqui se agrega el registro de usuario
+  signUp: (
+    Email: string,
+    Password: string,
+    Phone: string,
+    Address: string,
+    Name: string
+  ) => Promise<boolean>;
 }
 
 interface User {
@@ -118,6 +125,48 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     console.log("Sesión cerrada");
   };
 
+  const signUp = async (
+    Email: string,
+    Password: string,
+    Phone: string,
+    Address: string,
+    Name: string
+  ): Promise<boolean> => {
+    //console.log(Email, Password, Phone, Address, Name);
+    const date = new Date();
+    //console.log(date.toISOString());
+    const response = await fetch("http://localhost:3000/api/users/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        Email,
+        Password,
+        Phone,
+        Address,
+        Name,
+        CreatedAt: date.toISOString,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(
+        errorData.message || errorData.detail || "Error en la conexión"
+      );
+    }
+
+    const responseData: LoginResponse = await response.json();
+
+    console.log(responseData);
+    // Verificar que la respuesta sea exitosa
+    if (!responseData.success) {
+      throw new Error("Login fallido");
+    }
+    return true;
+  };
+
   return (
     <div data-testid="auth-provider">
       <AuthContext.Provider
@@ -130,6 +179,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
           //Methods
           loginWithEmailPassword,
           logout,
+          signUp,
         }}
       >
         {children}

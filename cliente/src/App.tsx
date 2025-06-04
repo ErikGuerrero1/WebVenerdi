@@ -15,9 +15,10 @@ import Social from "./components/Social";
 import Contact from "./components/Contact";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import CartPage from './components/CartPage';
-import PersonalizaPage from './components/Personaliza';
-import AdminPage from './components/Admin';
+import CartPage from "./components/CartPage";
+import PersonalizaPage from "./components/Personaliza";
+import AdminPage from "./components/Admin";
+import ProtectedRoute from "./components/protected-route"; // Importar el componente de protección
 
 import { AuthProvider } from "./components/context/AuthContext";
 
@@ -141,7 +142,16 @@ const AppContent = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/Registro" element={<Register />} />
         <Route path="/personaliza" element={<PersonalizaPage />} />
-        <Route path="/admin" element={<AdminPage />} />
+
+        {/* Ruta protegida solo para administradores */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute adminOnly={true}>
+              <AdminPage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
 
       <Footer />

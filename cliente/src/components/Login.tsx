@@ -36,6 +36,7 @@ function Login() {
       );
     } finally {
       setIsLoading(false);
+      navigate("/");
     }
   };
 

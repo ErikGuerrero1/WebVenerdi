@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthContext } from "./context/AuthContext";
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -11,22 +12,44 @@ function Register() {
     confirmPassword: "",
   });
 
+  const [error, setError] = useState("");
+
+  const { signUp } = useAuthContext();
+  const navigate = useNavigate();
+
   const handleChange = (e: any) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+    if (error) {
+      setError("");
+    }
   };
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
+    setError("");
     if (formData.password !== formData.confirmPassword) {
-      alert("Las contraseñas no coinciden");
+      setError("Contraseñas iguales.");
       return;
     }
-    // Lógica
-    console.log("Register data:", formData);
-    alert("Datos de registro enviados - Ver consola");
+
+    try {
+      await signUp(
+        formData.email,
+        formData.password,
+        formData.telefono,
+        formData.direccion,
+        formData.nombre
+      );
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "Error al registrar usuario"
+      );
+    } finally {
+      navigate("/");
+    }
   };
 
   return (
@@ -53,6 +76,13 @@ function Register() {
             </h1>
             <p className="text-gray-300">Únete a la familia Venerdi</p>
           </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mb-6 p-3 bg-red-900/50 border border-red-500 rounded-lg text-red-200 text-sm">
+              {error}
+            </div>
+          )}
 
           {/* Formulario */}
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -100,7 +130,7 @@ function Register() {
                 onChange={handleChange}
                 required
                 className="w-full px-4 py-3 bg-zinc-800 border border-zinc-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 transition-colors"
-                placeholder="+52 (953) 123-4567"
+                placeholder="953-123-4567"
               />
             </div>
 
