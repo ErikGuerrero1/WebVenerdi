@@ -60,13 +60,12 @@ INSERT INTO `category` (`CategoryID`, `Name`, `Description`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `customizationoption`
+-- Estructura de tabla para la tabla `customproductingredient`
 --
 
-CREATE TABLE `customizationoption` (
-  `CustomizationOptionID` int(11) NOT NULL,
-  `Name` varchar(100) NOT NULL,
-  `PriceModifier` decimal(10,2) NOT NULL
+CREATE TABLE `customproductingredient` (
+  `CustomProductID` int(11) NOT NULL,
+  `Name` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -139,23 +138,32 @@ CREATE TABLE `orderitem` (
   `OrderItemID` int(11) NOT NULL,
   `OrderID` int(11) NOT NULL,
   `ProductID` int(11) NOT NULL,
-  `Quantity` int(11) NOT NULL,
-  `BasePrice` decimal(10,2) DEFAULT NULL,
-  `Subtotal` decimal(10,2) DEFAULT NULL,
-  `Comments` text DEFAULT NULL
+  `Quantity` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `orderitemcustomization`
+-- Estructura de tabla para la tabla `ordercustomitem`
 --
 
-CREATE TABLE `orderitemcustomization` (
-  `OrderItemCustomizationID` int(11) NOT NULL,
-  `OrderItemID` int(11) NOT NULL,
-  `CustomizationOptionID` int(11) NOT NULL,
-  `PriceModifier` decimal(10,2) DEFAULT NULL
+CREATE TABLE `ordercustomitem` (
+  `OrderCustomItemID` int(11) NOT NULL,
+  `OrderID` int (11) NOT NULL,
+  `CustomProductID` int (11) NOT NULL,
+  `Quantity` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `customproduct`
+--
+
+CREATE TABLE `customproduct` (
+  `CustomProductID` int(11) NOT NULL,
+  `Name` varchar(100) NOT NULL,
+  `Price` decimal(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -280,10 +288,10 @@ ALTER TABLE `category`
   ADD UNIQUE KEY `Name` (`Name`);
 
 --
--- Indices de la tabla `customizationoption`
+-- Indices de la tabla `customproductingredient`
 --
-ALTER TABLE `customizationoption`
-  ADD PRIMARY KEY (`CustomizationOptionID`);
+ALTER TABLE `customproductingredient`
+  ADD KEY (`CustomProductID`);
 
 --
 -- Indices de la tabla `guestordercontact`
@@ -314,12 +322,18 @@ ALTER TABLE `orderitem`
   ADD KEY `ProductID` (`ProductID`);
 
 --
--- Indices de la tabla `orderitemcustomization`
+-- Indices de la tabla `ordercustomitem`
 --
-ALTER TABLE `orderitemcustomization`
-  ADD PRIMARY KEY (`OrderItemCustomizationID`),
-  ADD KEY `OrderItemID` (`OrderItemID`),
-  ADD KEY `CustomizationOptionID` (`CustomizationOptionID`);
+ALTER TABLE `ordercustomitem`
+  ADD PRIMARY KEY (`OrderCustomItemID`),
+  ADD KEY `OrderID` (`OrderID`),
+  ADD KEY `CustomProductID` (`CustomProductID`);
+
+--
+-- Indices de la tabla `customproduct`
+--
+ALTER TABLE `customproduct`
+  ADD PRIMARY KEY (`CustomProductID`);
 
 --
 -- Indices de la tabla `product`
@@ -360,12 +374,6 @@ ALTER TABLE `category`
   MODIFY `CategoryID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
--- AUTO_INCREMENT de la tabla `customizationoption`
---
-ALTER TABLE `customizationoption`
-  MODIFY `CustomizationOptionID` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `guestordercontact`
 --
 ALTER TABLE `guestordercontact`
@@ -390,10 +398,16 @@ ALTER TABLE `orderitem`
   MODIFY `OrderItemID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `orderitemcustomization`
+-- AUTO_INCREMENT de la tabla `ordercustomitem`
 --
-ALTER TABLE `orderitemcustomization`
-  MODIFY `OrderItemCustomizationID` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `ordercustomitem`
+  MODIFY `OrderCustomItemID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `customproduct`
+--
+ALTER TABLE `customproduct`
+  MODIFY `CustomProductID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `product`
@@ -418,6 +432,12 @@ ALTER TABLE `user`
 --
 
 --
+-- Filtros para la tabla `customproductingredient`
+--
+ALTER TABLE `customproductingredient`
+  ADD CONSTRAINT `customproductingredient_ibfk_1` FOREIGN KEY (`CustomProductID`) REFERENCES `customproduct` (`CustomProductID`);
+
+--
 -- Filtros para la tabla `order`
 --
 ALTER TABLE `order`
@@ -432,11 +452,11 @@ ALTER TABLE `orderitem`
   ADD CONSTRAINT `orderitem_ibfk_2` FOREIGN KEY (`ProductID`) REFERENCES `product` (`ProductID`);
 
 --
--- Filtros para la tabla `orderitemcustomization`
+-- Filtros para la tabla `ordercustomitem`
 --
-ALTER TABLE `orderitemcustomization`
-  ADD CONSTRAINT `orderitemcustomization_ibfk_1` FOREIGN KEY (`OrderItemID`) REFERENCES `orderitem` (`OrderItemID`),
-  ADD CONSTRAINT `orderitemcustomization_ibfk_2` FOREIGN KEY (`CustomizationOptionID`) REFERENCES `customizationoption` (`CustomizationOptionID`);
+ALTER TABLE `ordercustomitem`
+  ADD CONSTRAINT `ordercustomitem_ibfk_1` FOREIGN KEY (`OrderID`) REFERENCES `order` (`OrderID`),
+  ADD CONSTRAINT `ordercustomitem_ibfk_2` FOREIGN KEY (`CustomProductID`) REFERENCES `customproduct` (`CustomProductID`);
 
 --
 -- Filtros para la tabla `product`
