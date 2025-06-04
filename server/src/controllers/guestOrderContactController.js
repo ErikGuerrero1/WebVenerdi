@@ -26,7 +26,7 @@ const getGuestOrderContactById = async (req, res) => {
     try {
         const { guestContactId } = req.params;
 
-        const query = `SELECT * FROM user WHERE UserID = ?`;
+        const query = `SELECT * FROM guestordercontact WHERE GuestContactID = ?`;
         const [rows] = await pool.execute(query, [guestContactId]);
         const guestOrderContact = rows[0] || null;
 

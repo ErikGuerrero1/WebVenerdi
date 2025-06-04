@@ -142,7 +142,7 @@ const logIn = async (req, res) => {
         const [resp] = await pool.query(query, [datos.Email]);
         const user = resp[0] || null;
         if (resp) {
-            console.log(resp);
+            //console.log(resp);
             bcrypt.compare(datos.Password, user.PasswordHash, (err, isValid) => {
                 if (isValid) {
                     return res.status(200).json({
