@@ -61,6 +61,7 @@ const MenuPage = ({ onAddToCart, addingToCart }: MenuPageProps) => {
                         category.products && category.products.length > 0
                     )
                     setCategories(categoriesWithProducts)
+                    console.log('Categorías cargadas:', categoriesWithProducts)
                 } else {
                     console.error('Error en la respuesta de la API')
                 }

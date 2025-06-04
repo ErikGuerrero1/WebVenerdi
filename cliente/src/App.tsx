@@ -11,6 +11,7 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import CartPage from './components/CartPage';
 import PersonalizaPage from './components/Personaliza';
+import AdminPage from './components/Admin';
 
 interface CartItem {
   productId: number;
@@ -126,6 +127,7 @@ const AppContent = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/Registro" element={<Register />} />
           <Route path="/personaliza" element={<PersonalizaPage />} />
+          <Route path="/admin" element={<AdminPage />} />
         </Routes>
 
         <Footer />

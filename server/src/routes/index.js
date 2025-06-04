@@ -9,6 +9,7 @@ const orderRoutes = require('./orderRoutes.js');
 const userRoutes = require('./userRoutes.js');
 const guestOrderContactRoutes = require('./guestOrderContactRoutes.js');
 const whatsappApiRoutes = require('./whatsappApiRoutes.js');
+const productRoutes = require('./productRoutes.js');
 
 const router = express.Router();
 
@@ -22,5 +23,6 @@ router.use('/users', userRoutes);   // Nueva ruta para usuarios
 router.use('/orders', orderRoutes);  // Nueva ruta para órdenes
 router.use('/guest-order-contacts', guestOrderContactRoutes);
 router.use('/whats', whatsappApiRoutes);// Ruta temporal para pruebas de mensajes
+router.use('/products', productRoutes); // Ruta para productos
 
 module.exports = router;
