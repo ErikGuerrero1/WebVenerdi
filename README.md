@@ -1,17 +1,17 @@
 # WebVenerdi
 
-# NADIE OCUPA PNPM NAVA YA DÉJALO CON NPM
+# Instalación del Cliente para el proyecto
 
-## Instalación de las dependencias
+## Instalación de las dependencias del cliente
 
 ```bash
 cd cliente
-npm install
+pnpm install
 ```
 
 ## Correr el servicio del Front
 
 ```bash
 cd cliente
-npm run dev
+pnpm run dev
 ```
