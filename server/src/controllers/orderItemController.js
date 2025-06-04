@@ -134,10 +134,56 @@ const createOrderItem = async (req, res) => {
     }
 }
 
+// Params: orderItemId
+// Body: OrderID, ProductID, Quantity
+const updateOrderItem = async (req, res) => {
+    try {
+        const { orderItemId } = req.params;
+
+        const query = `UPDATE orderitem SET ? WHERE OrderItemID = ?`;
+        const resp = await pool.query(query, [req.body, orderItemId]);
+
+        return res.status(200).json({
+            success: true,
+            data: resp
+        });
+    } catch {
+        console.error('Error updating orderItem:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error al actualizar elemento de pedido'
+        });
+    }
+}
+
+// Params: orderItemId
+// Body: None
+const deleteOrderItem = async (req, res) => {
+    try {
+        const { orderItemId } = req.params;
+
+        const query = `DELETE FROM orderitem WHERE OrderItemID = ?`;
+        const resp = await pool.query(query, [orderItemId]);
+
+        return res.status(200).json({
+            success: true,
+            data: resp
+        });
+    } catch (error) {
+        console.error('Error deleting orderItem:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error al eliminar elemento de pedido'
+        });
+    }
+}
+
 module.exports = {
     getAllOrderItems,
     getOrderItemById,
     getOrderItemByOrderId,
     getOrderItemByProductId,
     createOrderItem,
+    updateOrderItem,
+    deleteOrderItem,
 };
