@@ -15,8 +15,9 @@ import Social from "./components/Social";
 import Contact from "./components/Contact";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import CartPage from "./components/CartPage";
-import PersonalizaPage from "./components/Personaliza";
+import CartPage from './components/CartPage';
+import PersonalizaPage from './components/Personaliza';
+import AdminPage from './components/Admin';
 
 import { AuthProvider } from "./components/context/AuthContext";
 
@@ -140,6 +141,7 @@ const AppContent = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/Registro" element={<Register />} />
         <Route path="/personaliza" element={<PersonalizaPage />} />
+        <Route path="/admin" element={<AdminPage />} />
       </Routes>
 
       <Footer />

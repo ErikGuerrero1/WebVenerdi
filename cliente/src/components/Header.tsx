@@ -26,6 +26,7 @@ const navItems = [
     { href: "/redes", label: "REDES" },
     { href: "/contacto", label: "CONTÁCTANOS" },
     { href: "/login", label: "INICIAR SESIÓN" },
+    { href: "/admin", label: "ADMINISTRADOR" },
 ];
 
 const Header = ({ currentPath = "/", cart = [], onCartClick }: HeaderProps) => {
