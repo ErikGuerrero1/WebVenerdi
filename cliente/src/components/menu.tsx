@@ -3,39 +3,14 @@ import { Card, CardContent } from '../components/ui/card'
 import { Button } from '../components/ui/button'
 import { Plus, Star, Clock, X } from 'lucide-react'
 import { Link } from 'react-router-dom'
-
-interface ProductSize {
-    ProductSizeID: number
-    Size: string
-    Price: string
-}
-
-interface Product {
-    ProductID: number
-    Name: string
-    Description: string
-    BasePrice: string
-    Available: number
-    ImageURL: string
-    sizes: ProductSize[]
-}
+import { generateCartItem } from "../hooks/useCartAdder"
+import type { Product, ProductSize, CartItem } from "../types"
 
 interface Category {
     CategoryID: number
     Name: string
     Description: string
     products: Product[]
-}
-
-interface CartItem {
-    productId: number
-    name: string
-    price: number
-    size?: string
-    sizeId?: number
-    imageUrl: string
-    quantity: number
-    id: string
 }
 
 interface MenuPageProps {
@@ -80,29 +55,13 @@ const MenuPage = ({ onAddToCart, addingToCart }: MenuPageProps) => {
             setSelectedProduct(product)
             setShowModal(true)
         } else {
-            const cartItem: CartItem = {
-                productId: product.ProductID,
-                name: product.Name,
-                price: parseFloat(product.BasePrice),
-                imageUrl: product.ImageURL,
-                quantity: 1,
-                id: `${product.ProductID}-default-${Date.now()}`
-            }
+            const cartItem = generateCartItem(product)
             onAddToCart(cartItem)
         }
     }
 
     const handleSizeSelection = (product: Product, size: ProductSize) => {
-        const cartItem: CartItem = {
-            productId: product.ProductID,
-            name: product.Name,
-            price: parseFloat(size.Price),
-            size: size.Size,
-            sizeId: size.ProductSizeID,
-            imageUrl: product.ImageURL,
-            quantity: 1,
-            id: `${product.ProductID}-${size.ProductSizeID}-${Date.now()}`
-        }
+        const cartItem = generateCartItem(product, size)
         onAddToCart(cartItem)
         setShowModal(false)
         setSelectedProduct(null)
@@ -128,8 +87,6 @@ const MenuPage = ({ onAddToCart, addingToCart }: MenuPageProps) => {
         ? categories
         : categories.filter((c) => c.CategoryID === selectedCategory)
 
-    console.log(filteredCategories)
-
     return (
         <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 pt-20 md:pt-24">
             <div className="bg-white shadow-lg">
@@ -146,7 +103,6 @@ const MenuPage = ({ onAddToCart, addingToCart }: MenuPageProps) => {
                     </Link>
                 </div>
             </div>
-
 
             <div className="max-w-7xl mx-auto px-4 py-8">
                 <div className="mb-8">
@@ -289,7 +245,7 @@ const MenuPage = ({ onAddToCart, addingToCart }: MenuPageProps) => {
                             </div>
 
                             <div className="space-y-3">
-                                {selectedProduct.sizes.map((size) => (
+                                {selectedProduct.sizes?.map((size) => (
                                     <Button
                                         key={size.ProductSizeID}
                                         onClick={() => handleSizeSelection(selectedProduct, size)}

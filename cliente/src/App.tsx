@@ -18,7 +18,7 @@ import Register from "./components/Register";
 import CartPage from "./components/CartPage";
 import PersonalizaPage from "./components/Personaliza";
 import AdminPage from "./components/Admin";
-import ProtectedRoute from "./components/protected-route"; // Importar el componente de protección
+import ProtectedRoute from "./components/protected-route";
 
 import { AuthProvider } from "./components/context/AuthContext";
 
@@ -141,7 +141,7 @@ const AppContent = () => {
         <Route path="/Contacto" element={<Contact />} />
         <Route path="/login" element={<Login />} />
         <Route path="/Registro" element={<Register />} />
-        <Route path="/personaliza" element={<PersonalizaPage />} />
+        <Route path="/personaliza" element={<PersonalizaPage onAddToCart={handleAddToCart}addingToCart={addingToCart}/>} />
 
         {/* Ruta protegida solo para administradores */}
         <Route
