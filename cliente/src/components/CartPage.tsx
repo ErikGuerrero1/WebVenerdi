@@ -161,7 +161,7 @@ const CartPage = ({
         }`);
 
         // Limpiar el carrito después de la compra exitosa
-        // onClearCart(); // Descomenta si quieres limpiar el carrito automáticamente
+         onClearCart(); 
       } else {
         console.error("Error en la compra:", result);
         alert(`Error al procesar el pedido: ${result.message}`);
