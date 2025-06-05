@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 26-05-2025 a las 03:51:57
+-- Tiempo de generación: 05-06-2025 a las 06:40:33
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -60,6 +60,18 @@ INSERT INTO `category` (`CategoryID`, `Name`, `Description`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `customproduct`
+--
+
+CREATE TABLE `customproduct` (
+  `CustomProductID` int(11) NOT NULL,
+  `Name` varchar(100) NOT NULL,
+  `Price` decimal(10,2) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `customproductingredient`
 --
 
@@ -81,6 +93,13 @@ CREATE TABLE `guestordercontact` (
   `Phone` varchar(20) DEFAULT NULL,
   `Address` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `guestordercontact`
+--
+
+INSERT INTO `guestordercontact` (`GuestContactID`, `Name`, `Email`, `Phone`, `Address`) VALUES
+(1, 'Alberto', '', '9532112722', 'Molinon');
 
 -- --------------------------------------------------------
 
@@ -128,6 +147,28 @@ CREATE TABLE `order` (
   `Status` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `order`
+--
+
+INSERT INTO `order` (`OrderID`, `UserID`, `GuestContactID`, `OrderDate`, `TotalAmount`, `Status`) VALUES
+(1, NULL, 1, '2025-06-04 20:51:09', 255.00, 'Pendiente'),
+(2, 3, NULL, '2025-06-04 22:28:07', 200.00, 'Pendiente'),
+(3, 3, NULL, '2025-06-04 22:28:07', 200.00, 'Pendiente');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ordercustomitem`
+--
+
+CREATE TABLE `ordercustomitem` (
+  `OrderCustomItemID` int(11) NOT NULL,
+  `OrderID` int(11) NOT NULL,
+  `CustomProductID` int(11) NOT NULL,
+  `Quantity` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 -- --------------------------------------------------------
 
 --
@@ -141,30 +182,14 @@ CREATE TABLE `orderitem` (
   `Quantity` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
 --
--- Estructura de tabla para la tabla `ordercustomitem`
+-- Volcado de datos para la tabla `orderitem`
 --
 
-CREATE TABLE `ordercustomitem` (
-  `OrderCustomItemID` int(11) NOT NULL,
-  `OrderID` int (11) NOT NULL,
-  `CustomProductID` int (11) NOT NULL,
-  `Quantity` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `customproduct`
---
-
-CREATE TABLE `customproduct` (
-  `CustomProductID` int(11) NOT NULL,
-  `Name` varchar(100) NOT NULL,
-  `Price` decimal(10,2) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+INSERT INTO `orderitem` (`OrderItemID`, `OrderID`, `ProductID`, `Quantity`) VALUES
+(1, 1, 2, 1),
+(2, 2, 1, 1),
+(3, 3, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -277,6 +302,14 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
+-- Volcado de datos para la tabla `user`
+--
+
+INSERT INTO `user` (`UserID`, `Name`, `Email`, `Phone`, `Address`, `PasswordHash`, `CreatedAt`) VALUES
+(0, 'admin', 'admin@gmail.com', '953', 'admin', '$2b$10$IRJDt/aFaangrMtc4B8ASOpHs8qKFBErxHpHsu2cgF3YuWgIqYJMO', NULL),
+(3, 'Alberto', 'prueba@gmail.com', '9532112722', 'Pedro Moreno, No. 5', '$2b$10$EXrStKW0yuifLom0GSw3iOpUTZTVypYw//07lCO1pAhei/TuYxKoi', NULL);
+
+--
 -- Índices para tablas volcadas
 --
 
@@ -288,10 +321,16 @@ ALTER TABLE `category`
   ADD UNIQUE KEY `Name` (`Name`);
 
 --
+-- Indices de la tabla `customproduct`
+--
+ALTER TABLE `customproduct`
+  ADD PRIMARY KEY (`CustomProductID`);
+
+--
 -- Indices de la tabla `customproductingredient`
 --
 ALTER TABLE `customproductingredient`
-  ADD KEY (`CustomProductID`);
+  ADD KEY `CustomProductID` (`CustomProductID`);
 
 --
 -- Indices de la tabla `guestordercontact`
@@ -314,14 +353,6 @@ ALTER TABLE `order`
   ADD KEY `GuestContactID` (`GuestContactID`);
 
 --
--- Indices de la tabla `orderitem`
---
-ALTER TABLE `orderitem`
-  ADD PRIMARY KEY (`OrderItemID`),
-  ADD KEY `OrderID` (`OrderID`),
-  ADD KEY `ProductID` (`ProductID`);
-
---
 -- Indices de la tabla `ordercustomitem`
 --
 ALTER TABLE `ordercustomitem`
@@ -330,10 +361,12 @@ ALTER TABLE `ordercustomitem`
   ADD KEY `CustomProductID` (`CustomProductID`);
 
 --
--- Indices de la tabla `customproduct`
+-- Indices de la tabla `orderitem`
 --
-ALTER TABLE `customproduct`
-  ADD PRIMARY KEY (`CustomProductID`);
+ALTER TABLE `orderitem`
+  ADD PRIMARY KEY (`OrderItemID`),
+  ADD KEY `OrderID` (`OrderID`),
+  ADD KEY `ProductID` (`ProductID`);
 
 --
 -- Indices de la tabla `product`
@@ -374,10 +407,16 @@ ALTER TABLE `category`
   MODIFY `CategoryID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
+-- AUTO_INCREMENT de la tabla `customproduct`
+--
+ALTER TABLE `customproduct`
+  MODIFY `CustomProductID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `guestordercontact`
 --
 ALTER TABLE `guestordercontact`
-  MODIFY `GuestContactID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `GuestContactID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `ingredient`
@@ -389,13 +428,7 @@ ALTER TABLE `ingredient`
 -- AUTO_INCREMENT de la tabla `order`
 --
 ALTER TABLE `order`
-  MODIFY `OrderID` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `orderitem`
---
-ALTER TABLE `orderitem`
-  MODIFY `OrderItemID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `OrderID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `ordercustomitem`
@@ -404,10 +437,10 @@ ALTER TABLE `ordercustomitem`
   MODIFY `OrderCustomItemID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `customproduct`
+-- AUTO_INCREMENT de la tabla `orderitem`
 --
-ALTER TABLE `customproduct`
-  MODIFY `CustomProductID` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `orderitem`
+  MODIFY `OrderItemID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `product`
@@ -425,7 +458,7 @@ ALTER TABLE `productsize`
 -- AUTO_INCREMENT de la tabla `user`
 --
 ALTER TABLE `user`
-  MODIFY `UserID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `UserID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Restricciones para tablas volcadas
@@ -445,18 +478,18 @@ ALTER TABLE `order`
   ADD CONSTRAINT `order_ibfk_2` FOREIGN KEY (`GuestContactID`) REFERENCES `guestordercontact` (`GuestContactID`);
 
 --
--- Filtros para la tabla `orderitem`
---
-ALTER TABLE `orderitem`
-  ADD CONSTRAINT `orderitem_ibfk_1` FOREIGN KEY (`OrderID`) REFERENCES `order` (`OrderID`),
-  ADD CONSTRAINT `orderitem_ibfk_2` FOREIGN KEY (`ProductID`) REFERENCES `product` (`ProductID`);
-
---
 -- Filtros para la tabla `ordercustomitem`
 --
 ALTER TABLE `ordercustomitem`
   ADD CONSTRAINT `ordercustomitem_ibfk_1` FOREIGN KEY (`OrderID`) REFERENCES `order` (`OrderID`),
   ADD CONSTRAINT `ordercustomitem_ibfk_2` FOREIGN KEY (`CustomProductID`) REFERENCES `customproduct` (`CustomProductID`);
+
+--
+-- Filtros para la tabla `orderitem`
+--
+ALTER TABLE `orderitem`
+  ADD CONSTRAINT `orderitem_ibfk_1` FOREIGN KEY (`OrderID`) REFERENCES `order` (`OrderID`),
+  ADD CONSTRAINT `orderitem_ibfk_2` FOREIGN KEY (`ProductID`) REFERENCES `product` (`ProductID`);
 
 --
 -- Filtros para la tabla `product`
