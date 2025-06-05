@@ -109,12 +109,12 @@ const procesarCompra = async (req, res) => {
 
         const orderID = orderResult.insertId;
 
-        // Paso 3: Crear los items de la orden
+        // Paso 3: Crear los items de la orden y preparar nombres para WhatsApp
         const orderItemsCreated = [];
         const nombresProductos = [];
 
         for (const item of carrito) {
-            const { productId, quantity, name, price, size, sizeId } = item;
+            const { productId, quantity, name, price, size, sizeId, isCustomPizza, customIngredients } = item;
 
             if (!productId || !quantity || quantity <= 0) {
                 await connection.rollback();
@@ -124,30 +124,62 @@ const procesarCompra = async (req, res) => {
                 });
             }
 
-            // Crear el item de la orden
-            const orderItemQuery = `INSERT INTO orderitem (OrderID, ProductID, Quantity) VALUES (?, ?, ?)`;
+            // Verificar si es una pizza personalizada
+            if (isCustomPizza || productId === 9999) {
+                // Para pizzas personalizadas, NO guardar en la base de datos
+                // pero sí agregar al array de respuesta y WhatsApp
+                orderItemsCreated.push({
+                    OrderItemID: null, // No se creó en BD
+                    OrderID: orderID,
+                    ProductID: productId,
+                    Quantity: quantity,
+                    ProductName: name,
+                    Size: size,
+                    UnitPrice: price,
+                    SizeID: sizeId,
+                    IsCustomPizza: true,
+                    CustomIngredients: customIngredients || []
+                });
 
-            const [orderItemResult] = await connection.execute(orderItemQuery, [
-                orderID,
-                productId,
-                quantity
-            ]);
+                // Agregar nombre del producto personalizado para WhatsApp
+                if (name) {
+                    let productDisplayName = size ? `${name} (${size})` : name;
 
-            orderItemsCreated.push({
-                OrderItemID: orderItemResult.insertId,
-                OrderID: orderID,
-                ProductID: productId,
-                Quantity: quantity,
-                ProductName: name,
-                Size: size,
-                UnitPrice: price,
-                SizeID: sizeId
-            });
+                    // Agregar ingredientes personalizados al nombre para WhatsApp
+                    if (customIngredients && customIngredients.length > 0) {
+                        const ingredientesTexto = customIngredients.join(', ');
+                        productDisplayName += ` - Ingredientes: ${ingredientesTexto}`;
+                    }
 
-            // Agregar nombre del producto para WhatsApp
-            if (name) {
-                const productDisplayName = size ? `${name} (${size})` : name;
-                nombresProductos.push(productDisplayName);
+                    nombresProductos.push(productDisplayName);
+                }
+            } else {
+                // Para productos normales, guardar en la base de datos
+                const orderItemQuery = `INSERT INTO orderitem (OrderID, ProductID, Quantity) VALUES (?, ?, ?)`;
+
+                const [orderItemResult] = await connection.execute(orderItemQuery, [
+                    orderID,
+                    productId,
+                    quantity
+                ]);
+
+                orderItemsCreated.push({
+                    OrderItemID: orderItemResult.insertId,
+                    OrderID: orderID,
+                    ProductID: productId,
+                    Quantity: quantity,
+                    ProductName: name,
+                    Size: size,
+                    UnitPrice: price,
+                    SizeID: sizeId,
+                    IsCustomPizza: false
+                });
+
+                // Agregar nombre del producto normal para WhatsApp
+                if (name) {
+                    const productDisplayName = size ? `${name} (${size})` : name;
+                    nombresProductos.push(productDisplayName);
+                }
             }
         }
 
