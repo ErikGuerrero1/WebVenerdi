@@ -10,8 +10,10 @@ import {
   MapPin,
   Mail,
   Phone,
+  CheckCircle,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuthContext } from "../components/context/AuthContext";
 
 interface CartItem {
   productId: number;
@@ -21,7 +23,7 @@ interface CartItem {
   sizeId?: number;
   imageUrl: string;
   quantity: number;
-  id: string; // ID único para cada item en el carrito
+  id: string;
 }
 
 interface ContactData {
@@ -49,6 +51,7 @@ const CartPage = ({
   onGoBack,
   onProceedToCheckout,
 }: CartPageProps) => {
+  const { isAuthenticated, user } = useAuthContext();
   const [updatingItem, setUpdatingItem] = useState<string | null>(null);
   const [contactData, setContactData] = useState<ContactData>({
     name: "",
@@ -92,7 +95,6 @@ const CartPage = ({
       ...prev,
       [field]: value,
     }));
-    // Imprimir en consola cada vez que cambie un campo
     console.log("Datos de contacto actualizados:", {
       ...contactData,
       [field]: value,
@@ -116,29 +118,67 @@ const CartPage = ({
     });
   };
 
-  const handleProceedToCheckout = () => {
-    const pedido = {
-      nombre: contactData.name,
-      phone: contactData.phone,
-      address: contactData.address,
-      isPickup: contactData.isPickup,
-      carrito:cartItems,
-      precioTotal: subtotal
-    }
+  const handleProceedToCheckout = async () => {
+    try {
+      // Preparar el pedido
+      const pedido = {
+        // Incluir el ID del usuario si está logueado
+        ...(isAuthenticated && user && { idUser: user.id }),
 
-    //aca esta beni
-    console.log(pedido)
-    //if (onProceedToCheckout) {
-  //    onProceedToCheckout();
-//    }
+        // Si está logueado, usar los datos del usuario, sino usar los del formulario
+        nombre: isAuthenticated && user ? user.name : contactData.name,
+        phone: isAuthenticated && user ? user.phone : contactData.phone,
+        address: isAuthenticated && user ? user.address : contactData.address,
+        isPickup: contactData.isPickup,
+        carrito: cartItems,
+        precioTotal: subtotal,
+      };
+
+      console.log("Enviando pedido:", pedido);
+
+      const response = await fetch(
+        "http://localhost:3000/api/order-items/compra",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(pedido),
+        }
+      );
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        console.log("Compra procesada exitosamente:", result);
+
+        alert(`¡Pedido procesado exitosamente! 
+        Número de pedido: ${result.data.order.OrderID}
+        ${
+          result.data.whatsappSent
+            ? "Se ha enviado confirmación por WhatsApp."
+            : ""
+        }`);
+
+        // Limpiar el carrito después de la compra exitosa
+        // onClearCart(); // Descomenta si quieres limpiar el carrito automáticamente
+      } else {
+        console.error("Error en la compra:", result);
+        alert(`Error al procesar el pedido: ${result.message}`);
+      }
+    } catch (error) {
+      console.error("Error de conexión:", error);
+      alert("Error de conexión. Por favor intenta nuevamente.");
+    }
   };
 
-  // Validar si los datos de contacto están completos
-  const isContactDataValid =
-    contactData.name.trim() !== "" &&
-    contactData.address.trim() !== "" &&
-    contactData.email.trim() !== "" &&
-    contactData.phone.trim() !== "";
+  // Validar si los datos están completos
+  const isContactDataValid = isAuthenticated
+    ? true // Si está logueado, los datos son válidos automáticamente
+    : contactData.name.trim() !== "" &&
+      contactData.address.trim() !== "" &&
+      contactData.email.trim() !== "" &&
+      contactData.phone.trim() !== "";
 
   if (cartItems.length === 0) {
     return (
@@ -220,7 +260,6 @@ const CartPage = ({
               >
                 <CardContent className="p-3 sm:p-4 lg:p-6">
                   <div className="flex gap-3 sm:gap-4">
-                    {/* Imagen del producto */}
                     <div className="flex-shrink-0">
                       <img
                         src={item.imageUrl}
@@ -229,7 +268,6 @@ const CartPage = ({
                       />
                     </div>
 
-                    {/* Información del producto */}
                     <div className="flex-1 min-w-0 space-y-2 sm:space-y-3">
                       <div className="flex justify-between items-start gap-2">
                         <div className="min-w-0 flex-1">
@@ -255,7 +293,6 @@ const CartPage = ({
                         </Button>
                       </div>
 
-                      {/* Controles de cantidad y precio */}
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2 sm:gap-3 bg-gray-100 rounded-lg p-1 text-black">
                           <Button
@@ -310,126 +347,209 @@ const CartPage = ({
                 <h2 className="text-lg sm:text-xl font-bold text-gray-800 flex items-center gap-2">
                   <User className="h-5 w-5" />
                   Datos de Contacto
+                  {isAuthenticated && (
+                    <CheckCircle className="h-5 w-5 text-green-500" />
+                  )}
                 </h2>
 
-                <div className="space-y-4">
-                  {/* Nombre */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                      <User className="h-4 w-4" />
-                      Nombre completo
-                    </label>
-                    <input
-                      type="text"
-                      value={contactData.name}
-                      onChange={(e) =>
-                        handleContactDataChange("name", e.target.value)
-                      }
-                      placeholder="Ingresa tu nombre completo"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors text-sm"
-                    />
-                  </div>
+                {/* Mostrar datos del usuario logueado */}
+                {isAuthenticated && user ? (
+                  <div className="space-y-4">
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <CheckCircle className="h-5 w-5 text-green-500" />
+                        <span className="text-sm font-semibold text-green-700">
+                          Sesión iniciada como:
+                        </span>
+                      </div>
 
-                  {/* Dirección */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                      <MapPin className="h-4 w-4" />
-                      {contactData.isPickup
-                        ? "Dirección de la tienda"
-                        : "Dirección de entrega"}
-                    </label>
-
-                    {/* Toggle para recoger en tienda */}
-                    <div className="flex items-center gap-3 mb-3">
-                      <button
-                        type="button"
-                        onClick={() => handlePickupToggle(false)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                          !contactData.isPickup
-                            ? "bg-orange-500 text-white"
-                            : "bg-gray-200 text-gray-600 hover:bg-gray-300"
-                        }`}
-                      >
-                        Entrega a domicilio
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handlePickupToggle(true)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                          contactData.isPickup
-                            ? "bg-green-500 text-white"
-                            : "bg-gray-200 text-gray-600 hover:bg-gray-300"
-                        }`}
-                      >
-                        Recoger en tienda
-                      </button>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <User className="h-4 w-4 text-green-600" />
+                          <span className="font-medium">{user.name}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Mail className="h-4 w-4 text-green-600" />
+                          <span>{user.email}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Phone className="h-4 w-4 text-green-600" />
+                          <span>{user.phone}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4 text-green-600" />
+                          <span>{user.address}</span>
+                        </div>
+                      </div>
                     </div>
 
-                    {contactData.isPickup ? (
+                    {/* Solo mostrar opción de pickup */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700">
+                        Opciones de entrega:
+                      </label>
+                      <div className="flex items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => handlePickupToggle(false)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                            !contactData.isPickup
+                              ? "bg-orange-500 text-white"
+                              : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                          }`}
+                        >
+                          Entrega a domicilio
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handlePickupToggle(true)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                            contactData.isPickup
+                              ? "bg-green-500 text-white"
+                              : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                          }`}
+                        >
+                          Recoger en tienda
+                        </button>
+                      </div>
+                    </div>
+
+                    {contactData.isPickup && (
                       <div className="bg-green-50 border border-green-200 rounded-lg p-3">
                         <p className="text-sm text-green-700 font-medium">
                           📍 Dirección de la tienda:
                         </p>
                         <p className="text-sm text-green-600 mt-1">
-                          {contactData.address}
+                          Pizzería Bella Vista - Av. Principal #123, Centro,
+                          Ciudad
                         </p>
                         <p className="text-xs text-green-500 mt-2">
                           Tu pedido estará listo en 15-20 minutos
                         </p>
                       </div>
-                    ) : (
-                      <textarea
-                        value={contactData.address}
-                        onChange={(e) =>
-                          handleContactDataChange("address", e.target.value)
-                        }
-                        placeholder="Calle, número, colonia, referencias..."
-                        rows={3}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors text-sm resize-none"
-                      />
                     )}
                   </div>
+                ) : (
+                  /* Formulario para usuarios no logueados */
+                  <div className="space-y-4">
+                    {/* Nombre */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                        <User className="h-4 w-4" />
+                        Nombre completo
+                      </label>
+                      <input
+                        type="text"
+                        value={contactData.name}
+                        onChange={(e) =>
+                          handleContactDataChange("name", e.target.value)
+                        }
+                        placeholder="Ingresa tu nombre completo"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors text-sm"
+                      />
+                    </div>
 
-                  {/* Email */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                      <Mail className="h-4 w-4" />
-                      Correo electrónico
-                    </label>
-                    <input
-                      type="email"
-                      value={contactData.email}
-                      onChange={(e) =>
-                        handleContactDataChange("email", e.target.value)
-                      }
-                      placeholder="tu.email@ejemplo.com"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors text-sm"
-                    />
-                  </div>
+                    {/* Dirección */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                        <MapPin className="h-4 w-4" />
+                        {contactData.isPickup
+                          ? "Dirección de la tienda"
+                          : "Dirección de entrega"}
+                      </label>
 
-                  {/* Teléfono */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                      <Phone className="h-4 w-4" />
-                      Número de teléfono
-                    </label>
-                    <input
-                      type="tel"
-                      value={contactData.phone}
-                      onChange={(e) =>
-                        handleContactDataChange("phone", e.target.value)
-                      }
-                      placeholder="(123) 456-7890"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors text-sm"
-                    />
-                  </div>
-                </div>
+                      <div className="flex items-center gap-3 mb-3">
+                        <button
+                          type="button"
+                          onClick={() => handlePickupToggle(false)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                            !contactData.isPickup
+                              ? "bg-orange-500 text-white"
+                              : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                          }`}
+                        >
+                          Entrega a domicilio
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handlePickupToggle(true)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                            contactData.isPickup
+                              ? "bg-green-500 text-white"
+                              : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                          }`}
+                        >
+                          Recoger en tienda
+                        </button>
+                      </div>
 
-                {!isContactDataValid && (
-                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
-                    <p className="text-sm text-orange-700">
-                      Por favor completa todos los campos para continuar
-                    </p>
+                      {contactData.isPickup ? (
+                        <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                          <p className="text-sm text-green-700 font-medium">
+                            📍 Dirección de la tienda:
+                          </p>
+                          <p className="text-sm text-green-600 mt-1">
+                            Pizzería Bella Vista - Av. Principal #123, Centro,
+                            Ciudad
+                          </p>
+                          <p className="text-xs text-green-500 mt-2">
+                            Tu pedido estará listo en 15-20 minutos
+                          </p>
+                        </div>
+                      ) : (
+                        <textarea
+                          value={contactData.address}
+                          onChange={(e) =>
+                            handleContactDataChange("address", e.target.value)
+                          }
+                          placeholder="Calle, número, colonia, referencias..."
+                          rows={3}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors text-sm resize-none"
+                        />
+                      )}
+                    </div>
+
+                    {/* Email */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                        <Mail className="h-4 w-4" />
+                        Correo electrónico
+                      </label>
+                      <input
+                        type="email"
+                        value={contactData.email}
+                        onChange={(e) =>
+                          handleContactDataChange("email", e.target.value)
+                        }
+                        placeholder="tu.email@ejemplo.com"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors text-sm"
+                      />
+                    </div>
+
+                    {/* Teléfono */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                        <Phone className="h-4 w-4" />
+                        Número de teléfono
+                      </label>
+                      <input
+                        type="tel"
+                        value={contactData.phone}
+                        onChange={(e) =>
+                          handleContactDataChange("phone", e.target.value)
+                        }
+                        placeholder="(123) 456-7890"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors text-sm"
+                      />
+                    </div>
+
+                    {!isContactDataValid && (
+                      <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                        <p className="text-sm text-orange-700">
+                          Por favor completa todos los campos para continuar
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
               </CardContent>

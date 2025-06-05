@@ -4,11 +4,10 @@ const { text } = require("express");
 const CONFIG = {
     VERSION: "v22.0",
     PHONE_NUMBER_ID: "646978738490011",
-    TOKEN: "EAAQsXy0ozoMBO6zTnyMDF0iOqZAi9t8EHZBAeTIm4HbGyTPkGjQniOxZBqwvLLLjqL1ZCSz3YZBTFW1iSrB8ZCPvSRQ3tStfcsHOZCX7Tvl4XCAAqD1uJ05pMyvErVoB2gembNFfRPUAhMm5bWVbqTSmIOgMYZBNL4md2qI5GcmmPExR0NKHzZCDsjonP40WriApyz9dtT7LLiOZBmHf4OkX2VpldTcHPsnIRhkWcZD"
+    TOKEN: "EAAQsXy0ozoMBO989b8xXSTBabSkwBKFuCYkim1ZA3P9cKpZCyjFDZBcXu2kvoQAcZAQBZCoac5jcRcf2AX0dF3YY7H3OCglE42gQqKOVzsI29eoHL8bD92LN8e6uUheWM8rkGCxH3yjqRs6cN8KnLjtvrfQMK5Wqm5ebuVyD4lQNrJOOlVaRvx98RtUZB0ldcrsgZDZD"
 };
 
-const crearCuerpoMensaje = (telefono, plantilla) => {
-    const nombre = "erik";
+const crearCuerpoMensaje = (telefono, plantilla, nombre = "", productos = [], numeroPedido = "") => {
     switch (plantilla) {
         case "hello_world":
             return {
@@ -35,13 +34,81 @@ const crearCuerpoMensaje = (telefono, plantilla) => {
                             parameters: [
                                 {
                                     type: "text",
-                                    text: "Erik"
+                                    text: nombre
                                 }
                             ]
                         }
                     ]
                 }
             };
+
+        case "pedidouno":
+            return {
+                messaging_product: "whatsapp",
+                to: `52${telefono}`,
+                type: "template",
+                template: {
+                    name: "pedidouno",
+                    language: { code: "en_US" },
+                    components: [
+                        {
+                            type: 'body',
+                            parameters: [
+                                { type: "text", text: nombre },
+                                { type: "text", text: productos[0] || "" },
+                                { type: "text", text: numeroPedido }
+                            ]
+                        }
+                    ]
+                }
+            };
+
+
+        case "pedidodos":
+            return {
+                messaging_product: "whatsapp",
+                to: `52${telefono}`,
+                type: "template",
+                template: {
+                    name: "pedidodos",
+                    language: { code: "en_US" },
+                    components: [
+                        {
+                            type: 'body',
+                            parameters: [
+                                { type: "text", text: nombre },
+                                { type: "text", text: productos[0] || "" },
+                                { type: "text", text: productos[1] || "" },
+                                { type: "text", text: numeroPedido }
+                            ]
+                        }
+                    ]
+                }
+            };
+
+        case "pedidodos":
+            return {
+                messaging_product: "whatsapp",
+                to: `52${telefono}`,
+                type: "template",
+                template: {
+                    name: "pedidodos",
+                    language: { code: "en_US" },
+                    components: [
+                        {
+                            type: 'body',
+                            parameters: [
+                                { type: "text", text: nombre },
+                                { type: "text", text: productos[0] || "" },
+                                { type: "text", text: productos[1] || "" },
+                                { type: "text", text: numeroPedido }
+                            ]
+                        }
+                    ]
+                }
+            };
+
+
         default:
             throw new Error(`Plantilla ${plantilla} no encontrada`);
     }
@@ -49,7 +116,8 @@ const crearCuerpoMensaje = (telefono, plantilla) => {
 
 const sendTemplate = async (req, res) => {
     try {
-        const { telefono, plantilla = "hello_world" } = req.body;
+        const { telefono, plantilla = "hello_world", nombre, productos = [], numeroPedido } = req.body;
+
         if (!telefono) {
             return res.status(400).json({
                 success: false,
@@ -58,7 +126,7 @@ const sendTemplate = async (req, res) => {
         }
 
         const url = `https://graph.facebook.com/${CONFIG.VERSION}/${CONFIG.PHONE_NUMBER_ID}/messages`;
-        const body = crearCuerpoMensaje(telefono, plantilla);
+        const body = crearCuerpoMensaje(telefono, plantilla, nombre, productos, numeroPedido);
 
         const response = await fetch(url, {
             method: "POST",

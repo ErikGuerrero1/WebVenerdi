@@ -10,5 +10,6 @@ router.get('/product/:productId', orderItemController.getOrderItemByProductId);
 router.post('/', orderItemController.createOrderItem);
 router.put('/:orderItemId', orderItemController.updateOrderItem);
 router.delete('/:orderItemId', orderItemController.deleteOrderItem);
+router.post('/compra', orderItemController.procesarCompra);
 
 module.exports = router;
