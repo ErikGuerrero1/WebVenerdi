@@ -77,7 +77,7 @@ const AppContent = () => {
 
   const handleProceedToCheckout = () => {
     setCart([]);
-    const phoneNumber = "9531720143";
+    /*const phoneNumber = "9531720143";
     let message =
       "¡Hola! Quiero hacer una compra. Estos son los productos:\n\n";
 
@@ -97,7 +97,7 @@ const AppContent = () => {
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
 
     // Redirigir a WhatsApp
-    window.open(whatsappUrl, "_blank");
+    window.open(whatsappUrl, "_blank");*/
   };
 
   const handleCartClick = () => {
