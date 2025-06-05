@@ -117,14 +117,20 @@ const CartPage = ({
   };
 
   const handleProceedToCheckout = () => {
-    // Imprimir datos completos antes de proceder
-    console.log("Datos de contacto finales:", contactData);
-    console.log("Items del carrito:", cartItems);
-    console.log("Total del pedido:", subtotal);
-
-    if (onProceedToCheckout) {
-      onProceedToCheckout();
+    const pedido = {
+      nombre: contactData.name,
+      phone: contactData.phone,
+      address: contactData.address,
+      isPickup: contactData.isPickup,
+      carrito:cartItems,
+      precioTotal: subtotal
     }
+
+    //aca esta beni
+    console.log(pedido)
+    //if (onProceedToCheckout) {
+  //    onProceedToCheckout();
+//    }
   };
 
   // Validar si los datos de contacto están completos
